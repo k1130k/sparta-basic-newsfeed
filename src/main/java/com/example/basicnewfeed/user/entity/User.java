@@ -16,11 +16,15 @@ public class User {
     private String email;
     @Column(nullable = false)
     private String password;
-    private String nickname;
+    private String nickName;
 
-    public User(String email, String password, String nickname) {
+    public User(String email, String password, String nickName) {
         this.email = email;
         this.password = password;
-        this.nickname = nickname;
+        this.nickName = nickName;
+    }
+
+    public void update(String nickName) {
+        this.nickName = nickName;
     }
 }

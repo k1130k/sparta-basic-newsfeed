@@ -20,12 +20,17 @@ public class AuthService {
     public void signup(AuthRequestDto request) {
 
         // 이메일이 중복되는 경우
-        if (userRepository.existByEmail(request.getEmail())) {
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalStateException("이미 가입된 이메일입니다");
         }
 
+        // 닉네임 중복되는 경우
+        if (userRepository.existsByNickName(request.getNickName())) {
+            throw new IllegalStateException("이미 존재하는 닉네임입니다.");
+        }
+
         // 가입 가능한 이메일인 경우
-        User user = new User(request.getEmail(), request.getPassword(), request.getNickname());
+        User user = new User(request.getEmail(), request.getPassword(), request.getNickName());
         User savedUser = userRepository.save(user);
     }
 
