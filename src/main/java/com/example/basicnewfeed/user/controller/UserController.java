@@ -2,9 +2,11 @@ package com.example.basicnewfeed.user.controller;
 
 import com.example.basicnewfeed.auth.annotation.Auth;
 import com.example.basicnewfeed.auth.dto.AuthUser;
+import com.example.basicnewfeed.user.dto.ChangePasswordRequestDto;
 import com.example.basicnewfeed.user.dto.UserRequestDto;
 import com.example.basicnewfeed.user.dto.UserResponseDto;
 import com.example.basicnewfeed.user.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +21,7 @@ public class UserController {
 
     //프로필 조회
     @GetMapping("/api/v1/users/{userId}")
-    public ResponseEntity<UserResponseDto> findOne(@PathVariable Long userId) {
+    public ResponseEntity<UserResponseDto> findOne(@Valid @PathVariable Long userId) {
         return ResponseEntity.ok(userService.findById(userId));
     }
 
@@ -33,8 +35,9 @@ public class UserController {
 
         // 비밀번호 수정
     @PatchMapping("/api/v1/mypage/password")
-    public void changePassword(
+    public UserResponseDto changePassword(
             @Auth AuthUser authUser,
-            @RequestBody
-    )
+            @Valid @RequestBody ChangePasswordRequestDto request) {
+        return userService.changePassword(authUser, request);
+    }
 }

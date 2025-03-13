@@ -27,4 +27,8 @@ public class User {
     public void update(String nickName) {
         this.nickName = nickName;
     }
+
+    public void changePassword(String newPassword) {
+        this.password = newPassword;
+    }
 }
