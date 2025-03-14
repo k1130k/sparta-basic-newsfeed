@@ -9,6 +9,8 @@ import com.example.basicnewfeed.user.entity.User;
 import com.example.basicnewfeed.user.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,26 +31,28 @@ public class PostService {
         );
         Post post = new Post(user, dto.getContent());
         Post savedPost = postRepository.save(post);
-        return new PostSaveResponseDto(savedPost.getId(),  savedPost.getContent(), savedPost.getUser().getId());
-
+        return new PostSaveResponseDto(savedPost.getId(),
+                savedPost.getContent(),
+                savedPost.getUser().getId(),
+                savedPost.getCreatedAt(),
+                savedPost.getUpdatedAt());
     }
 
     @Transactional(readOnly = true)
-    public List<PostResponseDto> findAll() {
-        List<Post> posts = postRepository.findAll();
-        List<PostResponseDto> dtos = new ArrayList<>();
+    public Page<PostResponseDto> findAll(AuthUser authUser, Pageable pageable) {
+        Page<Post> posts = postRepository.findAllByOrderByUpdatedAtDesc(pageable);
 
-        for (Post post : posts) {
-            PostResponseDto dto = new PostResponseDto(
-                    post.getId(),
-                    post.getUser().getId(),
-                    post.getContent(),
-                    post.getLikePost());
-            dtos.add(dto);
-        }
-        return dtos;
+        return posts.map(post -> new PostResponseDto(
+                post.getId(),
+                post.getUser().getId(),
+                post.getContent(),
+                post.getLikePost(),
+                post.getCreatedAt(),
+                post.getUpdatedAt()
+        ));
     }
 
+    @Transactional(readOnly = true)
     public PostResponseDto findOne(AuthUser authUser, @Valid Long postId) {
         Post post = postRepository.findById(postId) .orElseThrow(
                 () -> new IllegalStateException("게시글이 존재하지 않습니다."));
@@ -56,7 +60,9 @@ public class PostService {
                 post.getId(),
                 post.getUser().getId(),
                 post.getContent(),
-                post.getLikePost());
+                post.getLikePost(),
+                post.getCreatedAt(),
+                post.getUpdatedAt());
     }
 
     @Transactional
@@ -73,7 +79,9 @@ public class PostService {
                 post.getId(),
                 post.getUser().getId(),
                 post.getContent(),
-                post.getLikePost()
+                post.getLikePost(),
+                post.getCreatedAt(),
+                post.getUpdatedAt()
         );
     }
 

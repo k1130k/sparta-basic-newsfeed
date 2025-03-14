@@ -6,6 +6,9 @@ import com.example.basicnewfeed.post.dto.*;
 import com.example.basicnewfeed.post.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,41 +20,44 @@ public class PostController {
 
     private final PostService postService;
 
+    // 게시글 작성
     @PostMapping("/api/v1/posts")
     public ResponseEntity<PostSaveResponseDto> save(
             @Auth AuthUser authUser,
-            @Valid @RequestBody PostSaveRequestDto dto
-    ) {
+            @Valid @RequestBody PostSaveRequestDto dto) {
         return ResponseEntity.ok(postService.save(authUser, dto));
     }
 
+    // 게시글 전체조회
     @GetMapping("/api/v1/posts")
-    public ResponseEntity<List<PostResponseDto>> findAll() {
-        return ResponseEntity.ok(postService.findAll());
+    public ResponseEntity<Page<PostResponseDto>> findAll(
+            @Auth AuthUser authUser,
+            @PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok(postService.findAll(authUser, pageable));
     }
 
+    // 게시글 단건조회
     @GetMapping("/api/v1/posts/{postId}")
     public PostResponseDto findOne(
             @Auth AuthUser authUser,
-            @Valid @PathVariable Long postId
-    ) {
+            @Valid @PathVariable Long postId) {
         return postService.findOne(authUser, postId);
     }
 
+    // 게시글 수정
     @PatchMapping("/api/v1/posts/{postId}")
     public ResponseEntity<PostUpdateResponseDto> update(
             @Auth AuthUser authUser,
             @Valid @RequestBody PostUpdateRequestDto dto,
-            @PathVariable Long postId
-            ) {
+            @PathVariable Long postId) {
         return ResponseEntity.ok(postService.update(authUser, dto, postId));
     }
 
+    // 게시글 삭제
     @DeleteMapping("/api/v1/posts/{postId}")
     public void delete (
             @Auth AuthUser authUser,
-            @Valid @PathVariable Long postId
-    ) {
+            @Valid @PathVariable Long postId) {
         postService.deleteById(authUser, postId);
     }
 }

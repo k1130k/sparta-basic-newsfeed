@@ -27,7 +27,7 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new IllegalStateException("존재하지 않는 유저입니다")
         );
-        return new UserResponseDto(user.getId(), user.getEmail(), user.getNickName());
+        return new UserResponseDto(user.getId(), user.getEmail(), user.getNickName(), user.getFollowingCount(), user.getFollowerCount());
     }
 
     // 프로필 수정
@@ -73,7 +73,9 @@ public class UserService {
         return new UserResponseDto(
                 user.getId(),
                 user.getPassword(),
-                user.getNickName()
+                user.getNickName(),
+                user.getFollowingCount(),
+                user.getFollowingCount()
         );
     }
 }
