@@ -22,9 +22,10 @@ public class Post extends BaseEntity {
     private String content;
     private int likePost;
 
-    public Post(User user, String content) {
+    public Post(User user, String content/*, int likePost*/) {
         this.user = user;
         this.content = content;
+        /*this.likePost = likePost*/;
     }
 
     public void update(String content) {

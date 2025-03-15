@@ -2,6 +2,8 @@ package com.example.basicnewfeed.post.service;
 
 import com.example.basicnewfeed.auth.annotation.Auth;
 import com.example.basicnewfeed.auth.dto.AuthUser;
+import com.example.basicnewfeed.follow.entity.Follow;
+import com.example.basicnewfeed.follow.repository.FollowRepository;
 import com.example.basicnewfeed.post.dto.*;
 import com.example.basicnewfeed.post.entity.Post;
 import com.example.basicnewfeed.post.repository.PostRepository;
@@ -23,7 +25,9 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final FollowRepository followRepository;
 
+    // 게시글 작성
     @Transactional
     public PostSaveResponseDto save(AuthUser authUser, PostSaveRequestDto dto) {
         User user = userRepository.findById(authUser.getId()).orElseThrow(
@@ -38,6 +42,7 @@ public class PostService {
                 savedPost.getUpdatedAt());
     }
 
+    // 전체 게시글 조회
     @Transactional(readOnly = true)
     public Page<PostResponseDto> findAll(AuthUser authUser, Pageable pageable) {
         Page<Post> posts = postRepository.findAllByOrderByUpdatedAtDesc(pageable);
@@ -52,8 +57,9 @@ public class PostService {
         ));
     }
 
+    // 게시글 단건 조회
     @Transactional(readOnly = true)
-    public PostResponseDto findOne(AuthUser authUser, @Valid Long postId) {
+    public PostResponseDto findOne(AuthUser authUser,Long postId) {
         Post post = postRepository.findById(postId) .orElseThrow(
                 () -> new IllegalStateException("게시글이 존재하지 않습니다."));
         return new PostResponseDto(
@@ -65,8 +71,32 @@ public class PostService {
                 post.getUpdatedAt());
     }
 
+    // 팔로잉하고있는 사람 게시글 보기
+    @Transactional(readOnly = true)
+    public Page<PostResponseDto> getFollowingPosts(AuthUser authUser, Pageable pageable ) {
+        User following = userRepository.findById(authUser.getId()).orElseThrow(
+                () -> new IllegalStateException("존재하지 않는 유저입니다.")
+        );
+
+        List<Follow> followList = followRepository.findAllByFollower(following); // 2. follow db에서 팔로우한 사람들을 리스트로 추출
+        List<User> users = new ArrayList<>(); // 3. user 리스트 생성해서 follow에다가 집어넣음.
+        for (Follow follow : followList) {
+            users.add(follow.getFollowing());
+        }
+
+        Page<Post> posts = postRepository.findByUserInOrderByCreatedAtDesc(users, pageable);
+        return posts.map(post -> new PostResponseDto(
+                post.getId(),
+                post.getUser().getId(),
+                post.getContent(),
+                post.getLikePost(),
+                post.getCreatedAt(),
+                post.getUpdatedAt()
+        ));
+    }
+
     @Transactional
-    public PostUpdateResponseDto update(AuthUser authUser, @Valid PostUpdateRequestDto dto, Long postId) {
+    public PostUpdateResponseDto update(AuthUser authUser, PostUpdateRequestDto dto, Long postId) {
 
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalStateException("존재하지 않는 게시물입니다.")
@@ -96,6 +126,7 @@ public class PostService {
 
         postRepository.deleteById(postId);
     }
+
 }
 
 

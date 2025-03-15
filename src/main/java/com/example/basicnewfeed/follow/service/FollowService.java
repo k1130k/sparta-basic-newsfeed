@@ -52,7 +52,7 @@ public class FollowService {
         );
       followRepository.delete(follow);
 
-      following.decreaseFollowingCount();
-      follower.decreaseFollowerCount();
+        following.decreaseFollowingCount();
+        follower.decreaseFollowerCount();
     }
 }

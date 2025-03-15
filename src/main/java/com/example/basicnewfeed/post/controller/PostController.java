@@ -38,11 +38,21 @@ public class PostController {
 
     // 게시글 단건조회
     @GetMapping("/api/v1/posts/{postId}")
-    public PostResponseDto findOne(
+    public ResponseEntity<PostResponseDto> findOne(
             @Auth AuthUser authUser,
-            @Valid @PathVariable Long postId) {
-        return postService.findOne(authUser, postId);
+            @PathVariable Long postId) {
+        return ResponseEntity.ok(postService.findOne(authUser, postId));
     }
+
+    // 팔로잉한사람 게시글 보기
+
+    @GetMapping("/api/v1/posts/following")
+    public ResponseEntity<Page<PostResponseDto>> getFollowingPosts(
+            @Auth AuthUser authUser,
+            @PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok(postService.getFollowingPosts(authUser, pageable));
+    }
+
 
     // 게시글 수정
     @PatchMapping("/api/v1/posts/{postId}")
