@@ -20,15 +20,23 @@ public class Post extends BaseEntity {
 
     @Column(nullable = false)
     private String content;
-    private int likePost;
+    private int likePost = 0;
 
-    public Post(User user, String content/*, int likePost*/) {
+    public Post(User user, String content) {
         this.user = user;
         this.content = content;
-        /*this.likePost = likePost*/;
     }
 
     public void update(String content) {
         this.content = content;
+    }
+
+    // 좋아요수 증가 메서드
+    public void increaseLikePost() {
+        this.likePost++;
+    }
+
+    public void decreaseLikePost() {
+        this.likePost--;
     }
 }

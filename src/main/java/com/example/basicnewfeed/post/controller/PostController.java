@@ -9,9 +9,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -42,6 +45,18 @@ public class PostController {
             @Auth AuthUser authUser,
             @PathVariable Long postId) {
         return ResponseEntity.ok(postService.findOne(authUser, postId));
+    }
+
+    // 게시글 조건조회
+    @GetMapping("/api/v1/posts/search")
+    public ResponseEntity<Page<PostResponseDto>> search(
+            @Auth AuthUser authUser,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam(defaultValue = "updatedAt") String sortBy,
+            @PageableDefault(size = 10) Pageable pageable) {
+
+        return ResponseEntity.ok(postService.search(authUser, startDate, endDate, sortBy, pageable));
     }
 
     // 팔로잉한사람 게시글 보기

@@ -7,15 +7,17 @@ import java.time.LocalDateTime;
 @Getter
 public class PostSaveResponseDto {
     private final Long id;
+    private final String NickName;
     private final String content;
-    private final Long userId;
+    private int likePost;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public PostSaveResponseDto(Long id, String content, Long userId, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public PostSaveResponseDto(Long id, String NickName, String content, int likePost, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
+        this.NickName = NickName;
         this.content = content;
-        this.userId = userId;
+        this.likePost = likePost;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }

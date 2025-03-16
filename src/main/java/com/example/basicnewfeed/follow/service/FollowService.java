@@ -38,6 +38,7 @@ public class FollowService {
         follower.increaseFollowerCount();
     }
 
+    @Transactional
     public void unFollow(AuthUser authUser, Long userId) {
         User following = userRepository.findById(userId).orElseThrow(
                 () -> new IllegalStateException("회원이 존재하지 않습니다.")

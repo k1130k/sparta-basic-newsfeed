@@ -32,6 +32,11 @@ public class User extends BaseEntity {
         this.nickName = nickName;
     }
 
+    public User(Long id, String email) {
+        this.id = id;
+        this.email = email;
+    }
+
     public void update(String nickName) {
         this.nickName = nickName;
     }
