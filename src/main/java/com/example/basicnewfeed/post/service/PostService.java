@@ -53,7 +53,7 @@ public class PostService {
     // 전체 게시글 조회
     @Transactional(readOnly = true)
     public Page<PostResponseDto> findAll(AuthUser authUser, Pageable pageable) {
-        Page<Post> posts = postRepository.findAllByOrderByUpdatedAtDesc(pageable);
+            Page<Post> posts = postRepository.findAllByOrderByCreatedAtDesc(pageable);
 
         return posts.map(post -> new PostResponseDto(
                 post.getId(),

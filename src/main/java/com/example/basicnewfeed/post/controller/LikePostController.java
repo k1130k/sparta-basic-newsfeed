@@ -31,6 +31,4 @@ public class LikePostController {
                        @PathVariable Long postId) {
         likePostService.deleteById(authUser, postId);
     }
-
-
 }
