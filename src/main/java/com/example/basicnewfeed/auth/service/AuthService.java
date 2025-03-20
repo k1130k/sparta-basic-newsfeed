@@ -55,7 +55,5 @@ public class AuthService {
 
         String bearerJwt = jwtUtil.createToken(user.getId(), user.getEmail());
         return new AuthLoginResponseDto(bearerJwt);
-
-
     }
 }
