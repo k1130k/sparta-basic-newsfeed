@@ -32,6 +32,11 @@ public class FollowService {
             throw new IllegalStateException("본인은 팔로우 할 수 없습니다.");
         }
 
+        // 팔로우 중복 체크
+        if(followRepository.existsByFollowingAndFollower(following, follower)) {
+            throw new IllegalStateException("이미 팔로우한 유저입니다.");
+        }
+
         followRepository.save(new Follow(following, follower));
 
         following.increaseFollowingCount();
@@ -40,7 +45,7 @@ public class FollowService {
 
     @Transactional
     public void unFollow(AuthUser authUser, Long userId) {
-        User following = userRepository.findById(userId).orElseThrow(
+        User following = userRepository.findById(authUser.getId()).orElseThrow(
                 () -> new IllegalStateException("회원이 존재하지 않습니다.")
         );
 
@@ -51,6 +56,7 @@ public class FollowService {
         Follow follow = followRepository.findByFollowingAndFollower(following, follower).orElseThrow(
                 () -> new IllegalStateException("팔로우 관계가 존재하지 않습니다.")
         );
+
       followRepository.delete(follow);
 
         following.decreaseFollowingCount();

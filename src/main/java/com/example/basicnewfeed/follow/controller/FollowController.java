@@ -17,6 +17,7 @@ public class FollowController {
 
     private final FollowService followService;
 
+    // 유저 팔로우
     @PostMapping("/api/v1/addfollow/{targetUserId}")
     public void following(
             @Auth AuthUser authUser,
@@ -24,6 +25,7 @@ public class FollowController {
         followService.follow(authUser, targetUserId);
     }
 
+    //유저 언팔로우
     @DeleteMapping("/api/v1/addfollow/{targetUserId}")
     public void unFollow(
             @Auth AuthUser authUser,
